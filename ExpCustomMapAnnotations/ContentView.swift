@@ -6,11 +6,42 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct ContentView: View {
+    
+    @State private var annotations:[StopAnnotation]?
+    
+    @State private var polyLines:[MKPolyline] = []
+    
+    let location = LocationManager()
+    
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        VStack {
+            
+            if location.userLocation != nil {
+                
+                MapView(userLocation: location.userLocation, annotations: $annotations)
+                    .padding()
+            }
+            
+            
+            Image(systemName: annotations != nil ? "mappin.circle.fill" : "mappin.circle")
+                .onTapGesture {
+                    if annotations == nil {
+                        annotations = StopAnnotation.exampleArray
+                    } else {
+                        annotations = nil
+                    }
+                }
+        }
+        .onAppear { location.start() }
+        .onChange(of: annotations, perform: { value in
+            
+            
+            print("changed annotations")
+        })
     }
 }
 
